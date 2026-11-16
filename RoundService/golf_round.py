@@ -1,6 +1,4 @@
-
 from RoundService.hole_stats import HoleStats
-
 
 class GolfRound:
     def __init__(self, date, courseName):
@@ -8,9 +6,13 @@ class GolfRound:
         self.courseName = courseName
         self.holeStats = []
 
-    def addHoleStats(self, hole_number, par, strokes):
-        stats = HoleStats(hole_number, par, strokes)
-        self.holeStats.append(stats)
+    def addHoleStats(self, holeNumber, par, strokes,
+                     greenHit=False, fairwayHit=None, putts=0):
+        hole = HoleStats(
+            holeNumber, par, strokes,
+            greenHit, fairwayHit, putts
+        )
+        self.holeStats.append(hole)
 
     def validateRound(self):
         if not self.date or not self.courseName.strip():
@@ -19,23 +21,53 @@ class GolfRound:
         if len(self.holeStats) != 18:
             return False
 
-        hole_numbers = []
+        hole_numbers = set()
 
-        for stats in self.holeStats:
-            if not stats.validateStats():
+        for hole in self.holeStats:
+            if not hole.validateStats():
                 return False
 
-            hole_numbers.append(stats.hole_number)
+            if hole.holeNumber in hole_numbers:
+                return False
 
-        if sorted(hole_numbers) != list(range(1, 19)):
-            return False
+            hole_numbers.add(hole.holeNumber)
 
         return True
 
     def calculateTotalScore(self):
-        total = 0
+        return sum(hole.strokes for hole in self.holeStats)
 
-        for stats in self.holeStats:
-            total += stats.strokes
+    def calculateCoursePar(self):
+        return sum(hole.par for hole in self.holeStats)
 
-        return total
+    def calculateScoreToPar(self):
+        return self.calculateTotalScore() - self.calculateCoursePar()
+
+    def formatScore(self):
+        score = self.calculateTotalScore()
+        difference = self.calculateScoreToPar()
+
+        if difference == 0:
+            return f"{score} (E)"
+        elif difference > 0:
+            return f"{score} (+{difference})"
+        else:
+            return f"{score} ({difference})"
+
+    def calculateTotalPutts(self):
+        return sum(hole.putts for hole in self.holeStats)
+
+    def calculateGIR(self):
+        return sum(1 for hole in self.holeStats if hole.greenHit)
+
+    def calculateFairwaysHit(self):
+        return sum(
+            1 for hole in self.holeStats
+            if hole.fairwayHit is True
+        )
+
+    def calculateFairwayOpportunities(self):
+        return sum(
+            1 for hole in self.holeStats
+            if hole.par in (4, 5)
+        )
