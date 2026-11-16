@@ -4,13 +4,7 @@ from RoundService.golf_round import GolfRound
 from GolfDataRepository.golf_repository import GolfDataRepository
 
 
-def main():
-    print("================================")
-    print("  Golf Performance Tracker")
-    print("================================")
-
-    repository = GolfDataRepository()
-
+def recordRound(repository):
     print("\nRecord a New Golf Round")
 
     date = input("Enter date (YYYY-MM-DD): ")
@@ -53,12 +47,60 @@ def main():
         print(f"Course: {course}")
         print(f"Total Score: {total}")
 
-        if repository.saveRound(golf_round):
-            print("\nGolf round saved successfully!")
-        else:
-            print("\nError: Could not save round.")
+        try:
+            if repository.saveRound(golf_round):
+                print("\nGolf round saved successfully!")
+            else:
+                print("\nError: Could not save round.")
+        except (OSError, ValueError) as error:
+            print(f"\nError saving round: {error}")
     else:
         print("\nError: Invalid golf round.")
+
+
+def viewRoundHistory(repository):
+    try:
+        rounds = repository.getRounds()
+    except (OSError, ValueError) as error:
+        print(f"\nError loading rounds: {error}")
+        return
+
+    if not rounds:
+        print("\nNo saved golf rounds found.")
+        return
+
+    print("\nGolf Round History")
+    print("----------------------------")
+
+    for number, round_data in enumerate(rounds, 1):
+        print(f"\nRound {number}")
+        print(f"Date: {round_data['date']}")
+        print(f"Course: {round_data['courseName']}")
+        print(f"Total Score: {round_data['totalScore']}")
+
+
+def main():
+    repository = GolfDataRepository()
+
+    while True:
+        print("\n================================")
+        print("  Golf Performance Tracker")
+        print("================================")
+        print("1. Record Golf Round")
+        print("2. View Round History")
+        print("3. Exit")
+
+        choice = input("\nChoose an option (1-3): ")
+
+        if choice == "1":
+            recordRound(repository)
+        elif choice == "2":
+            viewRoundHistory(repository)
+        elif choice == "3":
+            print("\nGoodbye!")
+            break
+        else:
+            print("\nError: Invalid menu option.")
 
 
 if __name__ == "__main__":
