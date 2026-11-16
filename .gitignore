@@ -1,0 +1,16 @@
+# Python files
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# Saved golf rounds
+GolfDataRepository/rounds.json
+
+# Mac files
+.DS_Store
