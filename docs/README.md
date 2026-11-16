@@ -1,12 +1,12 @@
 # Welcome to the Golf Performance & Statistics Tracker
 # This is for CS 2450 - Software Engineering in Fall 2026
 
-#The Golf Performance & Statistics Tracker will allow a golfer to record their golf rounds,
+The Golf Performance & Statistics Tracker will allow a golfer to record their golf rounds,
 enter hole stats, calculate the total score, and save their data.
 
-# Currently a prototype #
+# Currently a prototype
 
-#Version 1.0 Features:
+# Version 1.0 Features: 
 - Records an 18-hole golf round
 - Able to enter the date and golf course name
 - Records the par and strokes for each hole
